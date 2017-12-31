@@ -1,0 +1,6 @@
+hello
+#this is test text file
+is this right file ?
+if this line has number like 9
+how about this line.. this line has 7 number
+is this right line ?
