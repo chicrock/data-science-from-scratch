@@ -1,11 +1,11 @@
 from __future__ import division
 from collections import Counter
 from functools import partial
-from linear_algebra import dot, vector_add
-from statistics import median, standard_deviation
-from probability import normal_cdf
-from gradient_descent import minimize_stochastic
-from simple_linear_regression import total_sum_of_squares
+from ch04_linear_algebra import dot, vector_add
+from ch05_statistics import median, standard_deviation
+from ch06_probability import normal_cdf
+from ch08_gradient_descent import minimize_stochastic
+from ch14_simple_linear_regression import total_sum_of_squares
 import math, random
 
 

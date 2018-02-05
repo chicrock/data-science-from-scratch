@@ -1,12 +1,13 @@
 from __future__ import division
 from collections import Counter
 from functools import partial
-from linear_algebra import dot, vector_add
-from gradient_descent import maximize_stochastic, maximize_batch
-from working_with_data import rescale
-from machine_learning import train_test_split
-from multiple_regression import estimate_beta, predict
+from ch04_linear_algebra import dot, vector_add
+from ch08_gradient_descent import maximize_stochastic, maximize_batch
+from ch10_working_with_data import rescale
+from ch11_machine_learning import train_test_split
+from ch15_multiple_regression import estimate_beta, predict
 import math, random
+import matplotlib.pyplot as plt
 
 def logistic(x):
     return 1.0 / (1 + math.exp(-x))
@@ -54,6 +55,13 @@ if __name__ == "__main__":
 
     rescaled_x = rescale(x)
     beta = estimate_beta(rescaled_x, y)
+    predictions = [predict(x_i, beta) for x_i in rescaled_x]
+
+    plt.scatter(predictions, y)
+    plt.xlabel('predicted')
+    plt.ylabel('actual')
+    plt.show()
+    
     print beta
 
     print "logistic regression:"
@@ -97,5 +105,11 @@ if __name__ == "__main__":
     precision = true_positives / (true_positives + false_positives)
     recall = true_positives / (true_positives + false_negatives)
 
+    predictions = [logistic(dot(beta_hat, x_i)) for x_i in x_test]
+    plt.scatter(predictions, y_test)
+    plt.xlabel('predicted probability')
+    plt.ylabel('actual outcome')
+    plt.title('Logistic Regression Predicted vs. Actual')
+    plt.show()
     print "precision", precision
     print "recall", recall

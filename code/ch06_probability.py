@@ -21,7 +21,7 @@ def normal_pdf(x, mu=0, sigma=1):
 def plot_normal_pdfs(plt):
     xs = [x / 10.0 for x in range(-50, 50)]
     plt.plot(xs,[normal_pdf(x,sigma=1) for x in xs],'-',label='mu=0,sigma=1')
-    plt.plot(xs,[normal_pdf(x,sigåma=0.5) for x in xs],':',label='mu=0,sigma=0.5')
+    plt.plot(xs,[normal_pdf(x,sigma=0.5) for x in xs],':',label='mu=0,sigma=0.5')
     plt.plot(xs,[normal_pdf(x,mu=-1)   for x in xs],'-.',label='mu=-1,sigma=1')
     plt.legend()
     plt.show()      
