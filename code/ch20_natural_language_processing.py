@@ -149,6 +149,31 @@ def sample_from(weights):
         rnd -= w                        # return the smallest i such that
         if rnd <= 0: return i           # sum(weights[:(i+1)]) >= rnd
 
+
+def p_topic_given_document(topic, d, alpha=0.1):
+    """the fraction of words in document _d_
+    that are assigned to _topic_ (plus some smoothing)"""
+
+    return ((document_topic_counts[d][topic] + alpha) /
+            (document_lengths[d] + K * alpha))
+
+def p_word_given_topic(word, topic, beta=0.1):
+    """the fraction of words assigned to _topic_
+    that equal _word_ (plus some smoothing)"""
+
+    return ((topic_word_counts[topic][word] + beta) /
+            (topic_counts[topic] + W * beta))
+
+def topic_weight(d, word, k):
+    """given a document and a word in that document,
+    return the weight for the k-th topic"""
+
+    return p_word_given_topic(word, k) * p_topic_given_document(k, d)
+
+def choose_new_topic(d, word):
+    return sample_from([topic_weight(d, word, k)
+                        for k in range(K)])
+
 documents = [
     ["Hadoop", "Big Data", "HBase", "Java", "Spark", "Storm", "Cassandra"],
     ["NoSQL", "MongoDB", "Cassandra", "HBase", "Postgres"],
@@ -183,31 +208,6 @@ W = len(distinct_words)
 
 D = len(documents)
 
-def p_topic_given_document(topic, d, alpha=0.1):
-    """the fraction of words in document _d_
-    that are assigned to _topic_ (plus some smoothing)"""
-
-    return ((document_topic_counts[d][topic] + alpha) /
-            (document_lengths[d] + K * alpha))
-
-def p_word_given_topic(word, topic, beta=0.1):
-    """the fraction of words assigned to _topic_
-    that equal _word_ (plus some smoothing)"""
-
-    return ((topic_word_counts[topic][word] + beta) /
-            (topic_counts[topic] + W * beta))
-
-def topic_weight(d, word, k):
-    """given a document and a word in that document,
-    return the weight for the k-th topic"""
-
-    return p_word_given_topic(word, k) * p_topic_given_document(k, d)
-
-def choose_new_topic(d, word):
-    return sample_from([topic_weight(d, word, k)
-                        for k in range(K)])
-
-
 random.seed(0)
 document_topics = [[random.randrange(K) for word in document]
                    for document in documents]
@@ -239,61 +239,9 @@ for iter in range(1000):
             topic_word_counts[new_topic][word] += 1
             topic_counts[new_topic] += 1
             document_lengths[d] += 1
-
+            
 if __name__ == "__main__":
 
-    document = get_document()
-
-    bigrams = zip(document, document[1:])
-    transitions = defaultdict(list)
-    for prev, current in bigrams:
-        transitions[prev].append(current)
-
-    random.seed(0)
-    print "bigram sentences"
-    for i in range(10):
-        print i, generate_using_bigrams(transitions)
-    print
-
-    # trigrams
-
-    trigrams = zip(document, document[1:], document[2:])
-    trigram_transitions = defaultdict(list)
-    starts = []
-
-    for prev, current, next in trigrams:
-
-        if prev == ".":              # if the previous "word" was a period
-            starts.append(current)   # then this is a start word
-
-        trigram_transitions[(prev, current)].append(next)
-
-    print "trigram sentences"
-    for i in range(10):
-        print i, generate_using_trigrams(starts, trigram_transitions)
-    print
-
-    grammar = {
-        "_S"  : ["_NP _VP"],
-        "_NP" : ["_N",
-                 "_A _NP _P _A _N"],
-        "_VP" : ["_V",
-                 "_V _NP"],
-        "_N"  : ["data science", "Python", "regression"],
-        "_A"  : ["big", "linear", "logistic"],
-        "_P"  : ["about", "near"],
-        "_V"  : ["learns", "trains", "tests", "is"]
-    }
-
-    print "grammar sentences"
-    for i in range(10):
-        print i, " ".join(generate_sentence(grammar))
-    print
-
-    print "gibbs sampling"
-    comparison = compare_distributions()
-    for roll, (gibbs, direct) in comparison.iteritems():
-        print roll, gibbs, direct
 
 
     # topic MODELING

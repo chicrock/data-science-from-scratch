@@ -140,3 +140,5 @@ fabric.properties
 
 # Customize
 notebook/twitter_app.conf
+
+.vscode
